@@ -1,42 +1,47 @@
 <?php
-// Database configuration
-$servername = "localhost";   // or your RDS/remote server
-$username   = "root";        // your DB username
-$password   = "";            // your DB password
-$dbname     = "mydatabase";  // your DB name
 
-// Create database connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$name=$_POST["username"];
+
+$email=$_POST["email"];
+
+$password= $_POST["password"];
+
+echo $name;
+
+echo $email;
+
+echo $password;
+
+$servername = "localhost";
+
+$username "root";
+
+$mpassword = "pass123";
+
+$dbname "facebook";
+
+// Create connection
+
+$conn mysqli_connect($servername, $username, $mpassword, $dbname);
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+
+if (!$conn) {
+
+die("Connection failed: " mysqli_connect_error());
+
 }
 
-// Get form values (sanitize inputs)
-$name     = isset($_POST['name']) ? trim($_POST['name']) : '';
-$email    = isset($_POST['email']) ? trim($_POST['email']) : '';
-$password = isset($_POST['password']) ? trim($_POST['password']) : '';
+$sql = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password")";
 
-// Basic validation
-if (empty($name) || empty($email) || empty($password)) {
-    die("All fields are required!");
-}
+if (mysqli_query($conn, $sql)) {
 
-// Hash password before storing (for security)
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+echo "New record created successfully";
 
-// Insert into database
-$sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sss", $name, $email, $hashed_password);
-
-if ($stmt->execute()) {
-    echo "Registration successful!";
 } else {
-    echo "Error: " . $stmt->error;
-}
 
-$stmt->close();
-$conn->close();
+echo "Error: $sql"<br>" mysqli_error($conn);
+
+mysqli_close($conn);
+
 ?>
